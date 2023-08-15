@@ -4,20 +4,20 @@ import cft.mergesort.logic.classes.CommandLineParser;
 import cft.mergesort.logic.classes.FileMerger;
 
 import com.beust.jcommander.JCommander;
-import org.apache.commons.cli.*;
 
 
 public class Main {
     public static void main(String[] args) {
         try {
             FileMerger fileMerger = new FileMerger();
-            CommandLineParser CommandLineParser = new CommandLineParser();
+            CommandLineParser commandLineParser = new CommandLineParser();
             JCommander.newBuilder()
-                    .addObject(CommandLineParser)
+                    .addObject(commandLineParser)
                     .build()
                     .parse(args);
 
-            System.out.println(CommandLineParser.getSortMode());
+            System.out.println(commandLineParser.getSortMode());
+            System.out.println(commandLineParser.getDataType());
         } catch (Throwable e) {
             System.out.println(e.getMessage());
         }
