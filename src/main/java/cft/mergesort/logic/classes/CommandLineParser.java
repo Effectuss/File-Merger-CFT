@@ -4,6 +4,7 @@ import cft.mergesort.logic.enums.DataType;
 import cft.mergesort.logic.enums.SortMode;
 import cft.mergesort.logic.exceptions.CommandLineParserException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -29,12 +30,17 @@ public class CommandLineParser {
 
         SortConfiguration configuration = new SortConfiguration();
 
-        int lenOptions = parsingArgumentStartsWithDash(args, configuration);
+        int currenIndex = parsingArgumentStartsWithDash(args, configuration);
 
-
-        if (configuration.getDataType() == null) {
-            throw new CommandLineParserException("DataType is not -s for string or -i for integer");
+        while (++currenIndex < args.length) {
+            if (configuration.getOutputFile() == null) {
+                configuration.setOutputFile(new File(args[currenIndex]));
+            } else {
+                configuration.addInputFile(new File(args[currenIndex]));
+            }
         }
+
+        checkRequiredArguments(configuration);
 
         return configuration;
     }
@@ -46,7 +52,7 @@ public class CommandLineParser {
             parseOption(configuration, args[count++]);
         }
 
-        return count;
+        return count - 1;
     }
 
     static void parseOption(SortConfiguration configuration, String option) {
@@ -59,4 +65,13 @@ public class CommandLineParser {
         }
     }
 
+    static void checkRequiredArguments(SortConfiguration configuration) throws CommandLineParserException {
+        if (configuration.getOutputFile() == null) {
+            throw new CommandLineParserException("The output file is not specified.");
+        } else if (configuration.getInputFiles().isEmpty()) {
+            throw new CommandLineParserException("The input files are not specified.");
+        } else if (configuration.getDataType() == null) {
+            throw new CommandLineParserException("The data type is not specified.");
+        }
+    }
 }

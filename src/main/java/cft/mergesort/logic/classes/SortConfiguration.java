@@ -58,6 +58,7 @@ public class SortConfiguration {
         if (inputFile.exists()) {
             this.inputFiles.add(inputFile);
         } else {
+            System.err.println("The input file " + inputFile.getName() + " does not exist.");
             this.notFoundInputFiles.add(inputFile);
         }
     }
