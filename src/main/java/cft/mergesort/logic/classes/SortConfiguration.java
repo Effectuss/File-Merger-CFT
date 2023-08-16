@@ -4,6 +4,7 @@ import cft.mergesort.logic.enums.SortMode;
 import cft.mergesort.logic.enums.DataType;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,15 +40,26 @@ public class SortConfiguration {
     }
 
     public File getOutputFile() {
-        return outputFile;
+        return this.outputFile;
     }
 
-    public void setOutputFile(File outputFile) {
+    public void setOutputFile(File outputFile) throws IOException {
+        if (outputFile.createNewFile()) {
+            System.out.println("The output file does not exist, but the file " + outputFile.getName() + " was created.");
+        }
         this.outputFile = outputFile;
     }
 
     public List<File> getInputFiles() {
-        return inputFiles;
+        return this.inputFiles;
+    }
+
+    public void addInputFile(File inputFile) {
+        if (inputFile.exists()) {
+            this.inputFiles.add(inputFile);
+        } else {
+            this.notFoundInputFiles.add(inputFile);
+        }
     }
 
     public void setInputFiles(List<File> inputFiles) {
@@ -55,10 +67,21 @@ public class SortConfiguration {
     }
 
     public List<File> getNotFoundInputFiles() {
-        return notFoundInputFiles;
+        return this.notFoundInputFiles;
     }
 
     public void setNotFoundInputFiles(List<File> notFoundInputFiles) {
         this.notFoundInputFiles = notFoundInputFiles;
+    }
+
+    @Override
+    public String toString() {
+        return "SortConfiguration{" +
+                "dataType=" + dataType +
+                ", sortMode=" + sortMode +
+                ", outputFile=" + outputFile +
+                ", inputFiles=" + inputFiles +
+                ", notFoundInputFiles=" + notFoundInputFiles +
+                '}';
     }
 }

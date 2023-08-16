@@ -1,6 +1,8 @@
 package cft.mergesort.logic.exceptions;
 
-public class CommandLineParserException extends RuntimeException {
+import java.io.IOException;
+
+public class CommandLineParserException extends IOException {
     public CommandLineParserException(String message) {
         super(message);
     }

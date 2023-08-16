@@ -7,9 +7,9 @@ public class Main {
     public static void main(String[] args) {
         try {
             SortConfiguration configuration = CommandLineParser.parse(args);
-
+            System.out.println(configuration.toString());
         } catch (Throwable e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 }
