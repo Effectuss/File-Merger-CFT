@@ -36,7 +36,11 @@ public class CommandLineParser {
             if (configuration.getOutputFile() == null) {
                 configuration.setOutputFile(new File(args[currenIndex]));
             } else {
-                configuration.addInputFile(new File(args[currenIndex]));
+                try {
+                    configuration.addInputFile(new File(args[currenIndex]));
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                }
             }
         }
 
@@ -45,27 +49,31 @@ public class CommandLineParser {
         return configuration;
     }
 
-    static int parsingArgumentStartsWithDash(String[] args, SortConfiguration configuration) {
+    private static int parsingArgumentStartsWithDash(String[] args, SortConfiguration configuration) {
         int count = 0;
 
         while (args[count].startsWith("-")) {
-            parseOption(configuration, args[count++]);
+            try {
+                parseOption(configuration, args[count++]);
+            } catch (CommandLineParserException e) {
+                System.err.println(e.getMessage());
+            }
         }
 
         return count - 1;
     }
 
-    static void parseOption(SortConfiguration configuration, String option) {
+    private static void parseOption(SortConfiguration configuration, String option) throws CommandLineParserException {
         if (DATA_TYPE_HASH_MAP.containsKey(option)) {
             configuration.setDataType(DATA_TYPE_HASH_MAP.get(option));
         } else if (SORT_MODE_HASH_MAP.containsKey(option)) {
             configuration.setSortMode(SORT_MODE_HASH_MAP.get(option));
         } else {
-            System.err.println("The option " + option + " is not supported.");
+            throw new CommandLineParserException("The option " + option + " is not supported.");
         }
     }
 
-    static void checkRequiredArguments(SortConfiguration configuration) throws CommandLineParserException {
+    private static void checkRequiredArguments(SortConfiguration configuration) throws CommandLineParserException {
         if (configuration.getOutputFile() == null) {
             throw new CommandLineParserException("The output file is not specified.");
         } else if (configuration.getInputFiles().isEmpty()) {

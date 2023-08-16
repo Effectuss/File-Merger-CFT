@@ -5,22 +5,19 @@ import cft.mergesort.logic.enums.DataType;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class SortConfiguration {
     private DataType dataType;
     private SortMode sortMode;
     private File outputFile;
-    private List<File> inputFiles;
-    private List<File> notFoundInputFiles;
+    private HashMap<File, Boolean> inputFiles;
 
     public SortConfiguration() {
         this.sortMode = SortMode.ASCENDING;
         this.dataType = null;
         this.outputFile = null;
-        this.inputFiles = new ArrayList<>();
-        this.notFoundInputFiles = new ArrayList<>();
+        this.inputFiles = new HashMap<>();
     }
 
     public DataType getDataType() {
@@ -50,29 +47,20 @@ public class SortConfiguration {
         this.outputFile = outputFile;
     }
 
-    public List<File> getInputFiles() {
+    public HashMap<File, Boolean> getInputFiles() {
         return this.inputFiles;
     }
 
-    public void addInputFile(File inputFile) {
+    public void addInputFile(File inputFile) throws IOException {
         if (inputFile.exists()) {
-            this.inputFiles.add(inputFile);
+            this.inputFiles.put(inputFile, true);
         } else {
-            System.err.println("The input file " + inputFile.getName() + " does not exist.");
-            this.notFoundInputFiles.add(inputFile);
+            throw new IOException("The input file " + inputFile.getName() + " does not exist.");
         }
     }
 
-    public void setInputFiles(List<File> inputFiles) {
+    public void setInputFiles(HashMap<File, Boolean> inputFiles) {
         this.inputFiles = inputFiles;
-    }
-
-    public List<File> getNotFoundInputFiles() {
-        return this.notFoundInputFiles;
-    }
-
-    public void setNotFoundInputFiles(List<File> notFoundInputFiles) {
-        this.notFoundInputFiles = notFoundInputFiles;
     }
 
     @Override
@@ -82,7 +70,6 @@ public class SortConfiguration {
                 ", sortMode=" + sortMode +
                 ", outputFile=" + outputFile +
                 ", inputFiles=" + inputFiles +
-                ", notFoundInputFiles=" + notFoundInputFiles +
                 '}';
     }
 }
