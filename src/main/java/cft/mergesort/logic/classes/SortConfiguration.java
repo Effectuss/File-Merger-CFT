@@ -14,10 +14,10 @@ public class SortConfiguration {
     private HashMap<File, Boolean> inputFiles;
 
     public SortConfiguration() {
-        this.sortMode = SortMode.ASCENDING;
-        this.dataType = null;
+        setSortMode(SortMode.ASCENDING);
+        this.setDataType(null);
         this.outputFile = null;
-        this.inputFiles = new HashMap<>();
+        this.setInputFiles(new HashMap<>());
     }
 
     public DataType getDataType() {

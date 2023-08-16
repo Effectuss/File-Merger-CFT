@@ -74,9 +74,7 @@ public class CommandLineParser {
     }
 
     private static void checkRequiredArguments(SortConfiguration configuration) throws CommandLineParserException {
-        if (configuration.getOutputFile() == null) {
-            throw new CommandLineParserException("The output file is not specified.");
-        } else if (configuration.getInputFiles().isEmpty()) {
+        if (configuration.getInputFiles().isEmpty()) {
             throw new CommandLineParserException("The input files are not specified.");
         } else if (configuration.getDataType() == null) {
             throw new CommandLineParserException("The data type is not specified.");

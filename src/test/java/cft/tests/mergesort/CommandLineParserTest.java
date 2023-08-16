@@ -17,120 +17,105 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 public class CommandLineParserTest {
-    private static File inputFileOne;
-    private static File inputFileTwo;
-    private static File inputFileThree;
-    private static File outputFile;
+    private static final URL wayToRes = CommandLineParserTest.class
+            .getClassLoader()
+            .getResource("test_resources_command_line_parser" + File.separator);
+    private static Path inputFileOnePath;
+    private static Path inputFileTwoPath;
+    private static Path inputFileThreePath;
+    private static Path outputPath;
 
     @BeforeAll
     static void setUp() {
-        URL inputFileOneUrl = CommandLineParserTest.class
-                .getClassLoader()
-                .getResource("test_resources_command_line_parser/in1.txt");
-        URL inputFileTwoUrl = CommandLineParserTest.class
-                .getClassLoader()
-                .getResource("test_resources_command_line_parser/in2.txt");
-        URL inputFileThreeUrl = CommandLineParserTest.class
-                .getClassLoader()
-                .getResource("test_resources_command_line_parser/in3.txt");
-        URL outputFileUrl = CommandLineParserTest.class
-                .getClassLoader()
-                .getResource("test_resources_command_line_parser/out.txt");
-
-        Path inputFileOnePath = Paths.get(inputFileOneUrl.getPath());
-        Path inputFileTwoPath = Paths.get(inputFileTwoUrl.getPath());
-        Path inputFileThreePath = Paths.get(inputFileThreeUrl.getPath());
-        Path outputPath = Paths.get(outputFileUrl.getPath());
-
-        inputFileOne = inputFileOnePath.toFile();
-        inputFileTwo = inputFileTwoPath.toFile();
-        inputFileThree = inputFileThreePath.toFile();
-        outputFile = outputPath.toFile();
+        assert wayToRes != null;
+        inputFileOnePath = Paths.get(wayToRes.getPath() + "in1.txt");
+        inputFileTwoPath = Paths.get(wayToRes.getPath() + "in2.txt");
+        inputFileThreePath = Paths.get(wayToRes.getPath() + "in3.txt");
+        outputPath = Paths.get(wayToRes.getPath() + "out.txt");
     }
 
     @Test
     void testCommandLineParserWithValidArguments1() throws IOException {
         String[] args = {"-s",
                 "-a",
-                outputFile.getPath(),
-                inputFileOne.getPath(),
-                inputFileTwo.getPath(),
-                inputFileThree.getPath()};
+                outputPath.toString(),
+                inputFileOnePath.toString(),
+                inputFileTwoPath.toString(),
+                inputFileThreePath.toString()};
 
         SortConfiguration configuration = CommandLineParser.parse(args);
 
         assertEquals(SortMode.ASCENDING, configuration.getSortMode());
         assertEquals(DataType.STRING, configuration.getDataType());
-        assertEquals(outputFile, configuration.getOutputFile());
-        assertTrue(configuration.getInputFiles().containsKey(inputFileOne));
-        assertTrue(configuration.getInputFiles().containsKey(inputFileTwo));
-        assertTrue(configuration.getInputFiles().containsKey(inputFileThree));
-        assertEquals(outputFile.getName(), configuration.getOutputFile().getName());
+        assertEquals(outputPath.toFile(), configuration.getOutputFile());
+        assertTrue(configuration.getInputFiles().containsKey(inputFileOnePath.toFile()));
+        assertTrue(configuration.getInputFiles().containsKey(inputFileTwoPath.toFile()));
+        assertTrue(configuration.getInputFiles().containsKey(inputFileThreePath.toFile()));
+        assertEquals(outputPath.getFileName().toString(), configuration.getOutputFile().getName());
     }
 
     @Test
     void testCommandLineParserWithValidArguments2() throws IOException {
         String[] args = {"-i",
                 "-d",
-                outputFile.getPath(),
-                inputFileOne.getPath(),
-                inputFileTwo.getPath(),
-                inputFileThree.getPath()};
+                outputPath.toString(),
+                inputFileOnePath.toString(),
+                inputFileTwoPath.toString(),
+                inputFileThreePath.toString()};
 
         SortConfiguration configuration = CommandLineParser.parse(args);
 
         assertEquals(SortMode.DESCENDING, configuration.getSortMode());
         assertEquals(DataType.INTEGER, configuration.getDataType());
-        assertEquals(outputFile, configuration.getOutputFile());
-        assertTrue(configuration.getInputFiles().containsKey(inputFileOne));
-        assertTrue(configuration.getInputFiles().containsKey(inputFileTwo));
-        assertTrue(configuration.getInputFiles().containsKey(inputFileThree));
-        assertEquals(outputFile.getName(), configuration.getOutputFile().getName());
+        assertEquals(outputPath.toFile(), configuration.getOutputFile());
+        assertTrue(configuration.getInputFiles().containsKey(inputFileOnePath.toFile()));
+        assertTrue(configuration.getInputFiles().containsKey(inputFileTwoPath.toFile()));
+        assertTrue(configuration.getInputFiles().containsKey(inputFileThreePath.toFile()));
+        assertEquals(outputPath.getFileName().toString(), configuration.getOutputFile().getName());
     }
 
     @Test
-    void testCommandLineParserWithValidArguments3() throws IOException {
+    void testCommandLineParserWithValidArgumentsDefaultSortMode() throws IOException {
         String[] args = {"-i",
-                outputFile.getPath(),
-                inputFileOne.getPath(),
-                inputFileTwo.getPath(),
-                inputFileThree.getPath()};
+                outputPath.toString(),
+                inputFileOnePath.toString(),
+                inputFileTwoPath.toString(),
+                inputFileThreePath.toString()};
 
         SortConfiguration configuration = CommandLineParser.parse(args);
 
         assertEquals(SortMode.ASCENDING, configuration.getSortMode());
         assertEquals(DataType.INTEGER, configuration.getDataType());
-        assertEquals(outputFile, configuration.getOutputFile());
-        assertTrue(configuration.getInputFiles().containsKey(inputFileOne));
-        assertTrue(configuration.getInputFiles().containsKey(inputFileTwo));
-        assertTrue(configuration.getInputFiles().containsKey(inputFileThree));
-        assertEquals(outputFile.getName(), configuration.getOutputFile().getName());
+        assertEquals(outputPath.toFile(), configuration.getOutputFile());
+        assertTrue(configuration.getInputFiles().containsKey(inputFileOnePath.toFile()));
+        assertTrue(configuration.getInputFiles().containsKey(inputFileTwoPath.toFile()));
+        assertTrue(configuration.getInputFiles().containsKey(inputFileThreePath.toFile()));
+        assertEquals(outputPath.getFileName().toString(), configuration.getOutputFile().getName());
     }
 
     @Test
     void testCommandLineParserWithValidArguments4() throws IOException {
         String[] args = {"-d",
                 "-s",
-                outputFile.getPath(),
-                inputFileOne.getPath(),
-                inputFileTwo.getPath(),
-                inputFileThree.getPath()};
+                outputPath.toString(),
+                inputFileOnePath.toString(),
+                inputFileTwoPath.toString(),
+                inputFileThreePath.toString()};
 
         SortConfiguration configuration = CommandLineParser.parse(args);
 
         assertEquals(SortMode.DESCENDING, configuration.getSortMode());
         assertEquals(DataType.STRING, configuration.getDataType());
-        assertEquals(outputFile, configuration.getOutputFile());
-        assertTrue(configuration.getInputFiles().containsKey(inputFileOne));
-        assertTrue(configuration.getInputFiles().containsKey(inputFileTwo));
-        assertTrue(configuration.getInputFiles().containsKey(inputFileThree));
-        assertEquals(outputFile.getName(), configuration.getOutputFile().getName());
+        assertEquals(outputPath.toFile(), configuration.getOutputFile());
+        assertTrue(configuration.getInputFiles().containsKey(inputFileOnePath.toFile()));
+        assertTrue(configuration.getInputFiles().containsKey(inputFileTwoPath.toFile()));
+        assertTrue(configuration.getInputFiles().containsKey(inputFileThreePath.toFile()));
+        assertEquals(outputPath.getFileName().toString(), configuration.getOutputFile().getName());
     }
 
     @Test
@@ -139,8 +124,8 @@ public class CommandLineParserTest {
                 "-k",
                 "-p",
                 "-s",
-                outputFile.getPath(),
-                inputFileOne.getPath()};
+                outputPath.toString(),
+                inputFileOnePath.toString()};
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalErrorStream = System.err;
@@ -164,23 +149,57 @@ public class CommandLineParserTest {
     }
 
     @Test
-    void testCommandLineParserWithMissingOutputFile() {
+    void testCommandLineParserWithMissingOutputFile() throws IOException {
+        assert wayToRes != null;
+        String[] args = {"-s",
+                "-a",
+                wayToRes.getPath() + "not_exist_out.txt",
+                inputFileOnePath.toString(),
+                inputFileTwoPath.toString(),
+                inputFileThreePath.toString()};
+
+        SortConfiguration configuration = CommandLineParser.parse(args);
+        assertNotNull(configuration.getOutputFile());
+        assertTrue(configuration.getOutputFile().exists());
+    }
+
+    @Test
+    void testCommandLineParserWithMissingDataTypeOption() {
+        String[] args = {"-a",
+                outputPath.toString(),
+                inputFileOnePath.toString(),
+                inputFileTwoPath.toString(),
+                inputFileThreePath.toString()};
+
+        try {
+            CommandLineParser.parse(args);
+        } catch (IOException e) {
+            assertEquals("The data type is not specified.", e.getMessage());
+        }
 
     }
 
     @Test
-    void testCommandLineParserWithMissingOption() {
+    void testCommandLineParserWithoutInputFile() {
+        String[] args = {"-s",
+                "-a",
+                outputPath.toString()};
 
+        try {
+            CommandLineParser.parse(args);
+        } catch (IOException e) {
+            assertEquals("The input files are not specified.", e.getMessage());
+        }
     }
 
     @Test
-    void testCommandLineParserWithInvalidOption() {
+    void testCommandLineParserShortInputArguments() {
+        String[] args = {"-s", "-a"};
 
+        try {
+            CommandLineParser.parse(args);
+        } catch (IOException e) {
+            assertEquals("Minimum number of arguments is 3", e.getMessage());
+        }
     }
-
-    @Test
-    void testCommandLineParserWithNotExistingInputFile() {
-
-    }
-
 }
