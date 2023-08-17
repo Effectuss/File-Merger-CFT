@@ -18,34 +18,21 @@ public class SortedFileMerger implements FileMerger {
         List<BufferedReader> readers = this.initReaders();
 
         if (readers.isEmpty()) {
-            return;
+            throw new IOException("No input files");
         }
 
-        System.out.println("No exit");
     }
 
     private List<BufferedReader> initReaders() {
         List<BufferedReader> readers = new ArrayList<>();
-        List<File> f = new ArrayList<>();
-        f.add(new File("in1.txt"));
-        f.add(new File("in2.txt"));
-        f.add(new File("in3.txt"));
-        f.add(new File("in4.txt"));
-        for (File file : f) {
+
+        for (File file : this.configuration.getInputFiles()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 readers.add(reader);
             } catch (IOException e) {
                 System.err.println("Reader initialization failed for file " + file.getName());
             }
         }
-
-//        for (File file : this.configuration.getInputFiles()) {
-//            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-//                readers.add(reader);
-//            } catch (IOException e) {
-//                System.err.println("Reader initialization failed for file " + file.getName());
-//            }
-//        }
 
         return readers;
     }
@@ -58,7 +45,7 @@ public class SortedFileMerger implements FileMerger {
         this.configuration = configuration;
     }
 
-    private class Element<T extends Comparable<T>> implements Comparable<Element<T>> {
+    private static class Element<T extends Comparable<T>> implements Comparable<Element<T>> {
         T value;
         int fileIndex;
 
