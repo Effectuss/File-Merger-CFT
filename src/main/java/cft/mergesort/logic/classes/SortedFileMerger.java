@@ -5,6 +5,8 @@ import cft.mergesort.logic.interfaces.FileMerger;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class SortedFileMerger implements FileMerger {
     private SortConfiguration configuration;
@@ -15,26 +17,47 @@ public class SortedFileMerger implements FileMerger {
 
     @Override
     public void merge() throws IOException {
-        List<BufferedReader> readers = this.initReaders();
+        List<BufferedReader> readers = this.createReaders();
 
         if (readers.isEmpty()) {
-            throw new IOException("No input files");
+            System.err.println("No input files");
+            return;
         }
 
+        List<String> currentLine = new ArrayList<>(readers.size());
+        List<String> previousLine = new ArrayList<>(readers.size());
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.configuration.getOutputFile()))) {
+        } finally {
+            closeReaders(readers);
+        }
     }
 
-    private List<BufferedReader> initReaders() {
-        List<BufferedReader> readers = new ArrayList<>();
 
-        for (File file : this.configuration.getInputFiles()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                readers.add(reader);
+    private List<BufferedReader> createReaders() {
+        return configuration.getInputFiles().stream()
+                .map(file -> {
+                    try {
+                        return new BufferedReader(new FileReader(file));
+                    } catch (FileNotFoundException e) {
+                        System.out.println(e.getMessage());
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    private void closeReaders(List<BufferedReader> readers) {
+        for (BufferedReader reader : readers) {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
             } catch (IOException e) {
-                System.err.println("Reader initialization failed for file " + file.getName());
+                System.err.println("Failed to close reader");
             }
         }
-
-        return readers;
     }
 
     public SortConfiguration getSortConfiguration() {
@@ -45,18 +68,4 @@ public class SortedFileMerger implements FileMerger {
         this.configuration = configuration;
     }
 
-    private static class Element<T extends Comparable<T>> implements Comparable<Element<T>> {
-        T value;
-        int fileIndex;
-
-        public Element(T value, int fileIndex) {
-            this.value = value;
-            this.fileIndex = fileIndex;
-        }
-
-        @Override
-        public int compareTo(Element<T> other) {
-            return this.value.compareTo(other.value);
-        }
-    }
 }

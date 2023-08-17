@@ -5,7 +5,6 @@ import cft.mergesort.logic.classes.SortConfiguration;
 import cft.mergesort.logic.classes.SortedFileMerger;
 import cft.mergesort.logic.interfaces.FileMerger;
 
-import java.io.File;
 import java.io.IOException;
 
 public class Main {
