@@ -5,19 +5,20 @@ import cft.mergesort.logic.enums.DataType;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SortConfiguration {
     private DataType dataType;
     private SortMode sortMode;
     private File outputFile;
-    private HashMap<File, Boolean> inputFiles;
+    private List<File> inputFiles;
 
     public SortConfiguration() {
         setSortMode(SortMode.ASCENDING);
         this.setDataType(null);
         this.outputFile = null;
-        this.setInputFiles(new HashMap<>());
+        this.setInputFiles(new ArrayList<>());
     }
 
     public DataType getDataType() {
@@ -47,19 +48,19 @@ public class SortConfiguration {
         this.outputFile = outputFile;
     }
 
-    public HashMap<File, Boolean> getInputFiles() {
+    public List<File> getInputFiles() {
         return this.inputFiles;
     }
 
     public void addInputFile(File inputFile) throws IOException {
         if (inputFile.exists()) {
-            this.inputFiles.put(inputFile, true);
+            this.inputFiles.add(inputFile);
         } else {
             throw new IOException("The input file " + inputFile.getName() + " does not exist.");
         }
     }
 
-    public void setInputFiles(HashMap<File, Boolean> inputFiles) {
+    public void setInputFiles(List<File> inputFiles) {
         this.inputFiles = inputFiles;
     }
 

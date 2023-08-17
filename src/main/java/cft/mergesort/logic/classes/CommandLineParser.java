@@ -52,7 +52,7 @@ public class CommandLineParser {
     private static int parsingArgumentStartsWithDash(String[] args, SortConfiguration configuration) {
         int count = 0;
 
-        while (args[count].startsWith("-")) {
+        while (count < args.length && args[count].startsWith("-")) {
             try {
                 parseOption(configuration, args[count++]);
             } catch (CommandLineParserException e) {
@@ -69,12 +69,14 @@ public class CommandLineParser {
         } else if (SORT_MODE_HASH_MAP.containsKey(option)) {
             configuration.setSortMode(SORT_MODE_HASH_MAP.get(option));
         } else {
-            throw new CommandLineParserException("The option " + option + " is not supported.");
+            throw new CommandLineParserException("The option " + option + " is not supported and ignored.");
         }
     }
 
     private static void checkRequiredArguments(SortConfiguration configuration) throws CommandLineParserException {
-        if (configuration.getInputFiles().isEmpty()) {
+        if (configuration.getOutputFile() == null) {
+            throw new CommandLineParserException("The output file is not specified.");
+        } else if (configuration.getInputFiles().isEmpty()) {
             throw new CommandLineParserException("The input files are not specified.");
         } else if (configuration.getDataType() == null) {
             throw new CommandLineParserException("The data type is not specified.");
