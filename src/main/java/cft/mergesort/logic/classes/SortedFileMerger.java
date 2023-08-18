@@ -1,13 +1,11 @@
 package cft.mergesort.logic.classes;
 
 import cft.mergesort.logic.enums.DataType;
+import cft.mergesort.logic.enums.SortMode;
 import cft.mergesort.logic.interfaces.FileMerger;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SortedFileMerger implements FileMerger {
@@ -29,15 +27,13 @@ public class SortedFileMerger implements FileMerger {
             return;
         }
 
-        currentLine = new ArrayList<>(Collections.nCopies(readers.size(), null));
-        previousLine = new ArrayList<>(Collections.nCopies(readers.size(), null));
-        stopAlgorithm = new ArrayList<>(Collections.nCopies(readers.size(), false));
+        initDefaultValueForArrays(readers.size());
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.configuration.getOutputFile()))) {
-            readFirstLineEachFile(readers);
-            for (String s : currentLine) {
-                if (s != null) {
-                    writer.write(s);
+            while (!stopAlgorithm.contains(true)) {
+                String line = getOutputLine(readers);
+                if (line != null) {
+                    writer.write(line);
                     writer.newLine();
                 }
             }
@@ -46,14 +42,51 @@ public class SortedFileMerger implements FileMerger {
         }
     }
 
-    private void readFirstLineEachFile(List<BufferedReader> readers) throws IOException {
+    private String getOutputLine(List<BufferedReader> readers) throws IOException {
+        fillCurrentLine(readers);
+    }
+
+    private void fillCurrentLine(List<BufferedReader> readers) throws IOException {
         for (int i = 0; i < readers.size(); ++i) {
-            String firstLine = readers.get(i).readLine();
-            if (isValidData(firstLine, i)) {
-                currentLine.add(i, firstLine);
-                previousLine.add(i, firstLine);
+            if (currentLine.get(i) != null) continue;
+            String line = null;
+            while (!stopAlgorithm.get(i)) {
+                if ((line = readers.get(i).readLine()) == null) {
+                    stopAlgorithm.set(i, true);
+                } else if (isValidData(line, i)) {
+                    currentLine.set(i, line);
+                    break;
+                }
+            }
+
+            if (line != null && !isCorrectDataInFile(i)) {
+                stopAlgorithm.set(i, true);
             }
         }
+    }
+
+    private boolean isCorrectDataInFile(int index) {
+        if (previousLine.get(index) == null || isCorrectDataOrder()) {
+            previousLine.set(index, currentLine.get(index));
+            return true;
+        }
+
+        currentLine.set(index, null);
+        return false;
+    }
+
+    private boolean isCorrectDataOrder(String currentLine, String previousLine, int index) {
+        if (configuration.getDataType() == DataType.INTEGER) {
+            try {
+                Integer currentInt = Integer.parseInt(currentLine);
+                Integer previousInt = Integer.parseInt(previousLine);
+                return;
+            } catch (NumberFormatException e) {
+                System.err.println("The data in file" + configuration.getInputFiles().get(index) + " cant be number");
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean isValidData(String line, int index) {
@@ -70,6 +103,21 @@ public class SortedFileMerger implements FileMerger {
             }
         }
         return true;
+    }
+
+    private void setStopAlgorithmForFile(int index) {
+        stopAlgorithm.set(index, true);
+    }
+
+    private void initDefaultValueForArrays(int size) {
+        currentLine = new ArrayList<>();
+        previousLine = new ArrayList<>();
+        stopAlgorithm = new ArrayList<>();
+        for (int i = 0; i < size; ++i) {
+            stopAlgorithm.add(false);
+            previousLine.add(null);
+            currentLine.add(null);
+        }
     }
 
     private List<BufferedReader> createReaders() {
