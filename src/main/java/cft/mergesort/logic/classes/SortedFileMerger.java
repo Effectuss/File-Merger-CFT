@@ -31,19 +31,17 @@ public class SortedFileMerger implements FileMerger {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.configuration.getOutputFile()))) {
             while (true) {
-                String line = getOutputLine(readers);
+                fillCurrentLine(readers);
+                String line = findBestLine();
                 if (line == null) break;
                 writer.write(line);
                 writer.newLine();
             }
+        } catch (IOException e) {
+            System.err.println("The file cant be written" + e.getMessage());
         } finally {
             closeReaders(readers);
         }
-    }
-
-    private String getOutputLine(List<BufferedReader> readers) throws IOException {
-        fillCurrentLine(readers);
-        return findBestLine();
     }
 
     private String findBestLine() {
@@ -149,10 +147,6 @@ public class SortedFileMerger implements FileMerger {
             }
         }
         return true;
-    }
-
-    private void setStopAlgorithmForFile(int index) {
-        stopAlgorithm.set(index, true);
     }
 
     private void initDefaultValueForArrays(int size) {

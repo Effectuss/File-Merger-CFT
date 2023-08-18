@@ -21,6 +21,13 @@ public class SortConfiguration {
         this.setInputFiles(new ArrayList<>());
     }
 
+    public SortConfiguration(DataType dataType, SortMode sortMode, File outputFile, List<File> inputFiles) throws IOException {
+        setSortMode(sortMode);
+        this.setDataType(dataType);
+        this.setOutputFile(outputFile);
+        this.setInputFiles(inputFiles);
+    }
+
     public DataType getDataType() {
         return dataType;
     }
