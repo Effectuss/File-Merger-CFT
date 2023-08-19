@@ -318,4 +318,54 @@ public class SortedFileMergerTest {
         String fileContent2 = new String(Files.readAllBytes(outputFile.toPath()));
         assertEquals(fileContent1, fileContent2);
     }
+
+    @Test
+    void testSortedFileMergerWithBadDataTypeForStringAscending() throws IOException {
+        testCase = wayToRes.getPath() + "case13" + File.separator;
+
+        File testFile = new File(testCase + "out.txt");
+        File outputFile = new File(testCase + "test.txt");
+
+        List<File> inputFiles = new ArrayList<>(Arrays.asList(
+                new File(testCase + "in1.txt"),
+                new File(testCase + "in2.txt"),
+                new File(testCase + "in3.txt")
+        ));
+
+        SortConfiguration configuration = new SortConfiguration(DataType.STRING,
+                SortMode.ASCENDING,
+                outputFile, inputFiles);
+
+        FileMerger fileMerger = new SortedFileMerger(configuration);
+        fileMerger.merge();
+
+        String fileContent1 = new String(Files.readAllBytes(testFile.toPath()));
+        String fileContent2 = new String(Files.readAllBytes(outputFile.toPath()));
+        assertEquals(fileContent1, fileContent2);
+    }
+
+    @Test
+    void testSortedFileMergerWithBadDataTypeForStringDescending() throws IOException {
+        testCase = wayToRes.getPath() + "case14" + File.separator;
+
+        File testFile = new File(testCase + "out.txt");
+        File outputFile = new File(testCase + "test.txt");
+
+        List<File> inputFiles = new ArrayList<>(Arrays.asList(
+                new File(testCase + "in1.txt"),
+                new File(testCase + "in2.txt"),
+                new File(testCase + "in3.txt")
+        ));
+
+        SortConfiguration configuration = new SortConfiguration(DataType.STRING,
+                SortMode.DESCENDING,
+                outputFile, inputFiles);
+
+        FileMerger fileMerger = new SortedFileMerger(configuration);
+        fileMerger.merge();
+
+        String fileContent1 = new String(Files.readAllBytes(testFile.toPath()));
+        String fileContent2 = new String(Files.readAllBytes(outputFile.toPath()));
+        assertEquals(fileContent1, fileContent2);
+    }
 }
