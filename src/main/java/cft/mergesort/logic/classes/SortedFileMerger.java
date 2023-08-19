@@ -64,7 +64,10 @@ public class SortedFileMerger implements FileMerger {
             }
         }
 
-        if (bestValue != null) currentLine.set(bestElementIndex, null);
+        if (bestValue != null) {
+            currentLine.set(bestElementIndex, null);
+        }
+
         return bestValue;
     }
 
@@ -142,7 +145,7 @@ public class SortedFileMerger implements FileMerger {
                 Integer.parseInt(line);
                 return true;
             } catch (NumberFormatException e) {
-                stopAlgorithm.add(index, true);
+                stopAlgorithm.set(index, true);
                 return false;
             }
         }
