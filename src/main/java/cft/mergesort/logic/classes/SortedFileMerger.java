@@ -23,19 +23,20 @@ public class SortedFileMerger implements FileMerger {
         List<BufferedReader> readers = this.createReaders();
 
         if (readers.isEmpty()) {
-            System.err.println("No input files");
-            return;
+            throw new IOException("There are no files to read");
         }
 
         initDefaultValueForArrays(readers.size());
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.configuration.getOutputFile()))) {
-            while (true) {
+            String line = "";
+            while (line != null) {
                 fillCurrentLine(readers);
-                String line = findBestLine();
-                if (line == null) break;
-                writer.write(line);
-                writer.newLine();
+                line = findValueForWrite();
+                if (line != null) {
+                    writer.write(line);
+                    writer.newLine();
+                }
             }
         } catch (IOException e) {
             System.err.println("The file cant be written" + e.getMessage());
@@ -44,12 +45,9 @@ public class SortedFileMerger implements FileMerger {
         }
     }
 
-    private String findBestLine() {
+    private String findValueForWrite() {
         String bestValue = null;
         int bestElementIndex = -1;
-
-        SortMode sortMode = configuration.getSortMode();
-        DataType dataType = configuration.getDataType();
 
         for (int i = 0; i < currentLine.size(); ++i) {
             String currentValue = currentLine.get(i);
@@ -58,7 +56,7 @@ public class SortedFileMerger implements FileMerger {
                 continue;
             }
 
-            if (bestValue == null || shouldUpdateBestValue(currentValue, bestValue, sortMode, dataType)) {
+            if (bestValue == null || shouldUpdateBestValue(currentValue, bestValue)) {
                 bestValue = currentValue;
                 bestElementIndex = i;
             }
@@ -71,23 +69,25 @@ public class SortedFileMerger implements FileMerger {
         return bestValue;
     }
 
-    private boolean shouldUpdateBestValue(String currentValue, String bestValue, SortMode sortMode, DataType dataType) {
+    private boolean shouldUpdateBestValue(String currentValue, String bestValue) {
         int comparisonResult = 0;
 
-        if (dataType == DataType.STRING) {
+        if (configuration.getDataType() == DataType.STRING) {
             comparisonResult = currentValue.compareTo(bestValue);
-        } else if (dataType == DataType.INTEGER) {
+        } else if (configuration.getDataType() == DataType.INTEGER) {
             comparisonResult = Integer.compare(Integer.parseInt(currentValue), Integer.parseInt(bestValue));
         }
 
-        return (sortMode == SortMode.ASCENDING && comparisonResult < 0)
-                || (sortMode == SortMode.DESCENDING && comparisonResult > 0);
+        return (configuration.getSortMode() == SortMode.ASCENDING && comparisonResult < 0)
+                || (configuration.getSortMode() == SortMode.DESCENDING && comparisonResult > 0);
     }
 
     private void fillCurrentLine(List<BufferedReader> readers) throws IOException {
         for (int i = 0; i < readers.size(); ++i) {
-            if (currentLine.get(i) != null) continue;
             String line = null;
+
+            if (currentLine.get(i) != null) continue;
+
             while (!stopAlgorithm.get(i)) {
                 if ((line = readers.get(i).readLine()) == null) {
                     stopAlgorithm.set(i, true);
@@ -114,26 +114,23 @@ public class SortedFileMerger implements FileMerger {
     }
 
     private boolean isCorrectDataOrder(String currentLine, String previousLine, int index) {
-        if (configuration.getDataType() == DataType.INTEGER) {
+        DataType dataType = configuration.getDataType();
+        SortMode sortMode = configuration.getSortMode();
+
+        if (dataType == DataType.INTEGER) {
             try {
                 int currentInt = Integer.parseInt(currentLine);
                 int previousInt = Integer.parseInt(previousLine);
-                if (configuration.getSortMode() == SortMode.ASCENDING) {
-                    return currentInt >= previousInt;
-                } else if (configuration.getSortMode() == SortMode.DESCENDING) {
-                    return currentInt <= previousInt;
-                }
+                return sortMode == SortMode.ASCENDING ? currentInt >= previousInt : currentInt <= previousInt;
             } catch (NumberFormatException e) {
-                System.err.println("The data in file " + configuration.getInputFiles().get(index) + " cant be number");
+                System.err.println("The data in file " + configuration.getInputFiles().get(index) + " can't be a number");
                 return false;
             }
-        } else if (configuration.getDataType() == DataType.STRING) {
-            if (configuration.getSortMode() == SortMode.ASCENDING) {
-                return currentLine.compareTo(previousLine) >= 0;
-            } else if (configuration.getSortMode() == SortMode.DESCENDING) {
-                return currentLine.compareTo(previousLine) <= 0;
-            }
+        } else if (dataType == DataType.STRING) {
+            int comparisonResult = currentLine.compareTo(previousLine);
+            return sortMode == SortMode.ASCENDING ? comparisonResult >= 0 : comparisonResult <= 0;
         }
+
         return true;
     }
 
