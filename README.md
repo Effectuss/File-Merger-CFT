@@ -36,3 +36,5 @@
 2. Тип данных (-s или -i), обязательный.
 3. Имя выходного файла, обязательное.
 4. Остальные параметры – имена входных файлов, не менее одного.
+
+```java -jar target/file-merger-1.0.jar -i -a out.txt target/classes/in1.txt target/classes/in2.txt target/classes/in3.txt```  

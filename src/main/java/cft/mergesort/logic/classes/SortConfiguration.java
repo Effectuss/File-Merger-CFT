@@ -73,11 +73,10 @@ public class SortConfiguration {
 
     @Override
     public String toString() {
-        return "SortConfiguration{" +
-                "dataType=" + dataType +
-                ", sortMode=" + sortMode +
-                ", outputFile=" + outputFile +
-                ", inputFiles=" + inputFiles +
-                '}';
+        return "SortConfiguration:\n" +
+                "dataType: " + dataType + ";\n" +
+                "sortMode: " + sortMode + ";\n" +
+                "outputFile: " + outputFile + ";\n" +
+                "inputFiles: " + inputFiles + ".\n";
     }
 }
