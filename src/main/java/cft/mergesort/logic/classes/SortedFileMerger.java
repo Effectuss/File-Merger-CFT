@@ -150,14 +150,9 @@ public class SortedFileMerger implements FileMerger {
     }
 
     private void initDefaultValueForArrays(int size) {
-        currentLine = new ArrayList<>();
-        previousLine = new ArrayList<>();
-        stopAlgorithm = new ArrayList<>();
-        for (int i = 0; i < size; ++i) {
-            stopAlgorithm.add(false);
-            previousLine.add(null);
-            currentLine.add(null);
-        }
+        currentLine = new ArrayList<>(Collections.nCopies(size, null));
+        previousLine = new ArrayList<>(Collections.nCopies(size, null));
+        stopAlgorithm = new ArrayList<>(Collections.nCopies(size, false));
     }
 
     private List<BufferedReader> createReaders() {

@@ -37,4 +37,12 @@
 3. Имя выходного файла, обязательное.
 4. Остальные параметры – имена входных файлов, не менее одного.
 
+## Инструкция по запуску
+
+- Версия java - ***JDK 18***
+- Система сборки - ***Apache Maven 3.8.8***
+- Библиотеки - ***JUnit Jupiter API » 5.10.0***
+- Ссылка на библиотеку - https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+
+
 ```java -jar target/file-merger-1.0.jar -i -a out.txt target/classes/in1.txt target/classes/in2.txt target/classes/in3.txt```  
