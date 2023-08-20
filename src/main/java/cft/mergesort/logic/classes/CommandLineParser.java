@@ -32,7 +32,7 @@ public class CommandLineParser {
 
         int currenIndex = parsingArgumentStartsWithDash(args, configuration);
 
-        while (++currenIndex < args.length) {
+        while (++currenIndex < args.length && configuration.getDataType() != null) {
             if (configuration.getOutputFile() == null) {
                 configuration.setOutputFile(new File(args[currenIndex]));
             } else {
@@ -74,12 +74,12 @@ public class CommandLineParser {
     }
 
     private static void checkRequiredArguments(SortConfiguration configuration) throws CommandLineParserException {
-        if (configuration.getOutputFile() == null) {
+        if (configuration.getDataType() == null) {
+            throw new CommandLineParserException("The data type is not specified.");
+        } else if (configuration.getOutputFile() == null) {
             throw new CommandLineParserException("The output file is not specified.");
         } else if (configuration.getInputFiles().isEmpty()) {
             throw new CommandLineParserException("The input files are not specified.");
-        } else if (configuration.getDataType() == null) {
-            throw new CommandLineParserException("The data type is not specified.");
         }
     }
 }
