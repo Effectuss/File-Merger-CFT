@@ -48,6 +48,7 @@ public class SortedFileMergerTest {
         String fileContent2 = new String(Files.readAllBytes(outputFile.toPath()));
         assertEquals(fileContent1, fileContent2);
     }
+
     @Test
     void testSortedFileMergerCorrectIntegerAscending() throws IOException {
         String testCasePath = testResourcesURL.getPath() + CASE_PREFIX + "1" + File.separator;
