@@ -147,9 +147,10 @@ public class CommandLineParserTest {
 
     @Test
     void testCommandLineParserWithMissingOutputFile() throws IOException {
+        Path outputPath = Paths.get(Paths.get(WAY_TO_RESULT) + File.separator + "not_exist_out.txt");
         String[] args = {"-s",
                 "-a",
-                WAY_TO_RESULT.getPath() + "not_exist_out.txt",
+                outputPath.toString(),
                 INPUT_FILE_ONE_PATH.toString(),
                 INPUT_FILE_TWO_PATH.toString(),
                 INPUT_FILE_THREE_PATH.toString()};
