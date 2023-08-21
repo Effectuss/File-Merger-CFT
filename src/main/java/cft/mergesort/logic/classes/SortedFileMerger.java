@@ -75,6 +75,7 @@ public class SortedFileMerger implements FileMerger {
                 return true;
             } catch (NumberFormatException e) {
                 stopAlgorithm.set(index, true);
+                System.err.println("The data in file " + configuration.getInputFiles().get(index) + " can't be a number");
                 return false;
             }
         }
@@ -82,16 +83,17 @@ public class SortedFileMerger implements FileMerger {
     }
 
     private boolean isCorrectDataInFile(int index) {
-        if (previousLine.get(index) == null || isCorrectDataOrder(currentLine.get(index), previousLine.get(index), index)) {
+        if (previousLine.get(index) == null || isCorrectDataOrder(currentLine.get(index), previousLine.get(index))) {
             previousLine.set(index, currentLine.get(index));
             return true;
+        } else {
+            currentLine.set(index, null);
+            System.err.println("The sort order in file " + configuration.getInputFiles().get(index) + " is incorrect, stop reading data");
+            return false;
         }
-        currentLine.set(index, null);
-        System.err.println("The sort order in file " + configuration.getInputFiles().get(index) + " is incorrect, stop reading data");
-        return false;
     }
 
-    private boolean isCorrectDataOrder(String currentLine, String previousLine, int index) {
+    private boolean isCorrectDataOrder(String currentLine, String previousLine) {
         DataType dataType = configuration.getDataType();
         SortMode sortMode = configuration.getSortMode();
 
@@ -101,7 +103,6 @@ public class SortedFileMerger implements FileMerger {
                 int previousInt = Integer.parseInt(previousLine);
                 return (sortMode == SortMode.ASCENDING) ? currentInt >= previousInt : currentInt <= previousInt;
             } catch (NumberFormatException e) {
-                System.err.println("The data in file " + configuration.getInputFiles().get(index) + " can't be a number");
                 return false;
             }
         } else if (dataType == DataType.STRING) {
@@ -114,29 +115,25 @@ public class SortedFileMerger implements FileMerger {
 
     private String findValueForWrite() {
         String valueForWrite = null;
-        int bestElementIndex = -1;
+        int index = -1;
 
         for (int i = 0; i < currentLine.size(); ++i) {
             String currentValue = currentLine.get(i);
 
-            if (currentValue == null) {
-                continue;
-            }
-
-            if (valueForWrite == null || shouldUpdateBestValue(currentValue, valueForWrite)) {
+            if ((currentValue != null) && (valueForWrite == null || shouldUpdateValueForWrite(currentValue, valueForWrite))) {
                 valueForWrite = currentValue;
-                bestElementIndex = i;
+                index = i;
             }
         }
 
         if (valueForWrite != null) {
-            currentLine.set(bestElementIndex, null);
+            currentLine.set(index, null);
         }
 
         return valueForWrite;
     }
 
-    private boolean shouldUpdateBestValue(String currentValue, String bestValue) {
+    private boolean shouldUpdateValueForWrite(String currentValue, String bestValue) {
         int comparisonResult = 0;
 
         if (configuration.getDataType() == DataType.STRING) {
