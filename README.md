@@ -68,10 +68,10 @@
 
 - запуск цели install для сборки jar файла, необходимо ввести в терминал и выполнить команду, находясь в корневой
   директории проекта
-    - Windows: `mvnw.cmd clean install`
-    - UNIX: `./mvnw clean install`
+    - Windows: `./mvnw.cmd install`
+    - UNIX: `./mvnw install`
 - запуск цели test
-    - Windows: `mvnw.cmd clean test`
+    - Windows: `./mvnw.cmd clean test`
     - UNIX: `./mvnw clean test`
 
 После сборки проекта, для запуска исполняемого файла(jar архив) из кореневой директории проекта:
@@ -91,6 +91,13 @@
 - После этого можете запустить исполняемый файл(jar архив) командой из корневой директории проект
   ```java -jar target/file-merger-1.0.jar -i -a out.txt target/classes/in1.txt target/classes/in2.txt target/classes/in3.txt```
 
+### Третий способ
+Стандартный запуск из IDEA:
+
+- Открыть "Edit configuration" в строке где указаны входные аргументы программы ввести
+  ```-a -i out.txt target/classes/in1.txt target/classes/in2.txt target/classes/in3.txt```
+- Запустить метод Main
+- 
 ## Особенности моей реализации
 
 - Во время парсинга командной строки, если будет встречен неизвестный аргумент например `-j -k`,

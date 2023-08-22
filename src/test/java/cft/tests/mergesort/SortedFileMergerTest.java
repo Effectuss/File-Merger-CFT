@@ -5,12 +5,13 @@ import cft.mergesort.logic.classes.SortedFileMerger;
 import cft.mergesort.logic.enums.DataType;
 import cft.mergesort.logic.enums.SortMode;
 import cft.mergesort.logic.interfaces.FileMerger;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,12 +22,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SortedFileMergerTest {
     private static final String TEST_RESOURCES_PATH = "test_resources_sorted_file_merger";
     private static final String CASE_PREFIX = "case";
+    private static URI testResourcesURL;
 
-    private URL testResourcesURL;
-
-    @BeforeEach
-    void setUp() {
-        testResourcesURL = CommandLineParserTest.class.getClassLoader().getResource(TEST_RESOURCES_PATH + File.separator);
+    @BeforeAll
+    static void setUp() throws URISyntaxException {
+        testResourcesURL = ClassLoader.getSystemResource(TEST_RESOURCES_PATH + File.separator).toURI();
     }
 
     private void runAndAssertMerge(String testCasePath, DataType dataType, SortMode sortMode) throws IOException {
